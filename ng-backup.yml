@@ -1,0 +1,13 @@
+---
+- name: show ng-backup file name
+  hosts: ngate1
+  tasks:
+    - name: capture ng-backup result file name
+      shell: /opt/ngate/sbin/ng-backup | awk '{print $4}' | sed 's/.$//'
+      register: ng_backup
+#    - debug: var=ng_backup
+    - set_fact: ng_backup_file={{ ng_backup.stdout }}
+    - name: get ng-backup
+      ansible.builtin.fetch:
+        src: "{{ ng_backup_file }}"
+        dest: /tmp/

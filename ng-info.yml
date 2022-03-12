@@ -3,6 +3,11 @@
   hosts: ngate1
   tasks:
     - name: capture ng-info result file name
-      command: "/opt/ngate/sbin/ng-info | grep 'Resulting archive' | awk '{print $4}'"
-      register: ng_info_file
-    - debug: var=ng_info_file
+      shell: >
+        /opt/ngate/sbin/ng-info | grep 'Resulting archive' | awk '{print $4}'
+      register: ng_info
+    - set_fact: ng_info_file={{ ng_info.stdout }}
+    - name: get ng-info
+      ansible.builtin.fetch:
+        src: "{{ ng_info_file }}"
+        dest: /tmp/
